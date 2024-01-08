@@ -15,7 +15,6 @@
 		"deploy:local": "dfx deploy --network=local",
 		"lint": "eslint ./src/icp_app_frontend",
 		"deploy:ic": "dfx deploy --network=ic",
-		"generate": "dfx generate icp_app_backend",
 		"canister:status": "dfx canister status --all",
 		"canister:stop:all": "dfx canister stop --all",
 		"canister:delete:all": "dfx canister delete --all",
