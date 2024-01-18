@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { createRoot } from "react-dom";
 import PDFOcr from "./components/PDFOcr";
 import ImageUploader from "./components/ImageUploader";
+import PDFOcr2 from "./components/PDFOcr2";
 
 
 const App = () => {
@@ -16,6 +17,7 @@ const App = () => {
     <div style={{ "fontSize": "30px" }}>
       <ImageUploader handleImageUpload={handleImageUpload} selectedImage={selectedImage} />
       <PDFOcr selectedImage={selectedImage} />
+      <PDFOcr2 />
     </div>
   );
 };
