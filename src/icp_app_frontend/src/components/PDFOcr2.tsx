@@ -37,6 +37,8 @@ export default function PDFOcr2() {
         const readPDF = async () => {
             try {
                 const loadingTask = pdfjsLib.getDocument("https://s29.q4cdn.com/175625835/files/doc_downloads/test.pdf");
+                // Test 2
+                // const loadingTask = pdfjsLib.getDocument("https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/web/compressed.tracemonkey-pldi-09.pdf");
                 // const loadingTask = pdfjsLib.getDocument(pdfTest);
                 const loadedPdf = await loadingTask.promise;
                 setPdfRef(loadedPdf);
@@ -63,10 +65,6 @@ export default function PDFOcr2() {
 
         readPDF();
     }, []);
-
-    const nextPage = () => pdfRef && currentPage < pdfRef.numPages && setCurrentPage(currentPage + 1);
-
-    const prevPage = () => currentPage > 1 && setCurrentPage(currentPage - 1);
 
     return (
         <div>
