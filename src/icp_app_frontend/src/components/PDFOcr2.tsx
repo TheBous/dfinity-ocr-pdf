@@ -7,7 +7,7 @@ import * as pdfjsWorker from "pdfjs-dist/build/pdf.worker.entry";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
-export default function PDFOcr2() {
+export default function PDFOcr2({ selectedImage, setSelectedImage }: { selectedImage: string, setSelectedImage: (_selectedImage: string) => void }) {
     const canvasRef = useRef();
 
     const [pdfRef, setPdfRef] = useState();
@@ -33,41 +33,49 @@ export default function PDFOcr2() {
         renderPage(currentPage, pdfRef);
     }, [pdfRef, currentPage, renderPage]);
 
-    useEffect(() => {
-        const readPDF = async () => {
-            try {
-                const loadingTask = pdfjsLib.getDocument("https://s29.q4cdn.com/175625835/files/doc_downloads/test.pdf");
-                // Test 2
-                // const loadingTask = pdfjsLib.getDocument("https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/web/compressed.tracemonkey-pldi-09.pdf");
-                // const loadingTask = pdfjsLib.getDocument(pdfTest);
-                const loadedPdf = await loadingTask.promise;
-                setPdfRef(loadedPdf);
+    const readPDF = async () => {
+        try {
+            const loadingTask = pdfjsLib.getDocument(selectedImage);
+            // const loadingTask = pdfjsLib.getDocument("https://s29.q4cdn.com/175625835/files/doc_downloads/test.pdf");
+            // Test 2
+            // const loadingTask = pdfjsLib.getDocument("https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/web/compressed.tracemonkey-pldi-09.pdf");
+            // const loadingTask = pdfjsLib.getDocument(pdfTest);
+            const loadedPdf = await loadingTask.promise;
+            setPdfRef(loadedPdf);
 
-                const totalPageCount = loadedPdf.numPages;
-                const countPromises = [];
+            const totalPageCount = loadedPdf.numPages;
+            const countPromises = [];
 
-                for (let currentPage = 1; currentPage <= totalPageCount; currentPage++) {
-                    const page = await loadedPdf.getPage(currentPage);
-                    const textContent = await page.getTextContent();
-                    const text = await textContent.items.map(s => s.str).join('');
-                    countPromises.push(text);
-                }
-
-                const texts = await Promise.all(countPromises);
-                console.warn(texts.join());
-                const joinedText = texts.join('');
-                setText(joinedText);
-                return joinedText;
-            } catch (error) {
-                console.error('Error reading PDF:', error);
+            for (let currentPage = 1; currentPage <= totalPageCount; currentPage++) {
+                const page = await loadedPdf.getPage(currentPage);
+                const textContent = await page.getTextContent();
+                const text = await textContent.items.map(s => s.str).join('');
+                countPromises.push(text);
             }
-        };
 
-        readPDF();
-    }, []);
+            const texts = await Promise.all(countPromises);
+            console.warn(texts.join());
+            const joinedText = texts.join('');
+            setText(joinedText);
+            return joinedText;
+        } catch (error) {
+            console.error('Error reading PDF:', error);
+        }
+    };
+
+
+    useEffect(() => {
+        if (selectedImage) readPDF();
+    }, [selectedImage]);
+
+
+    const loadPDFTest = () => {
+        setSelectedImage("https://s29.q4cdn.com/175625835/files/doc_downloads/test.pdf");
+    };
 
     return (
         <div>
+            <button onClick={loadPDFTest}>load test pdf</button>
             <canvas style={{ width: '30%', height: 'auto' }} ref={canvasRef}></canvas>
             <h1>Text: </h1>
             <span>
